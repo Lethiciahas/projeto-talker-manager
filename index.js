@@ -1,6 +1,8 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const fs = require('fs/promises');
+const generateToken = require('./generateToken');
+// const loginValidate = require('./loginMiddleware');
 
 const app = express();
 app.use(bodyParser.json());
@@ -28,6 +30,10 @@ app.get('/talker/:id', async (req, res) => {
    return res.status(HTTP_OK_STATUS).json(talkerID);
 });
 // req 03
+app.post('/login', (_req, res) => {
+  const token = generateToken();
+    return res.status(HTTP_OK_STATUS).json({ token });
+ });
 
 app.listen(PORT, () => {
   console.log('Online');
