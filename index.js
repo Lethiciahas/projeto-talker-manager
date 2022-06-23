@@ -3,6 +3,13 @@ const bodyParser = require('body-parser');
 const fs = require('fs/promises');
 const generateToken = require('./generateToken');
 const loginValidate = require('./loginMiddleware');
+const authToken = require('./authTokenMiddleware');
+const authTalkerRate = require('./authTalkRateMiddleware');
+const authUserName = require('./authUserMiddleware');
+const authAge = require('./authAgeMiddleware');
+const authTalk = require('./authTalkMiddleware');
+const authTalkerWatched = require('./authTalkWMiddleware');
+const setTalkers = require('./utils');
 
 const app = express();
 app.use(bodyParser.json());
@@ -29,11 +36,31 @@ app.get('/talker/:id', async (req, res) => {
   }
    return res.status(HTTP_OK_STATUS).json(talkerID);
 });
-// req 03
+// req 03 e req 4
 app.post('/login', loginValidate, (_req, res) => {
   const tokens = generateToken();
     return res.status(HTTP_OK_STATUS).json({ token: tokens });
  });
+
+// req 5
+app.post('/talker', 
+authToken, 
+authUserName, 
+authAge,
+authTalk,
+authTalkerWatched, 
+authTalkerRate, 
+async (req, res) => {
+  const getTalker = JSON.parse(await fs.readFile('./talker.json'));
+  const { name, age, talk: { watchedAt, rate } } = req.body;
+  const id = getTalker.length + 1;
+  const newTalker = { name, age, id, talk: { watchedAt, rate } };
+  getTalker.push(newTalker);
+  const newTalkdata = JSON.stringify(getTalker);
+  await setTalkers(newTalkdata);
+ 
+  return res.status(201).json(newTalker);
+});
 
 app.listen(PORT, () => {
   console.log('Online');

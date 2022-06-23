@@ -13,5 +13,6 @@ function loginValidate(req, res, next) {
     if (password.length < 6) return res.status(400).json({ message: msgPass2 });
     next();
 }
+// fonte REGEX Email https://www.horadecodar.com.br/2020/09/07/expressao-regular-para-validar-e-mail-javascript-regex/
 
 module.exports = loginValidate;

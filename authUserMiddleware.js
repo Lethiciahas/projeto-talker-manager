@@ -1,0 +1,11 @@
+function authUserName(req, res, next) {
+    const { name } = req.body;
+//    const msgErrorName = 'O campo "name" é obrigatório';
+//    const msgErrorName2 = 'O campo "name" deve ter pelo menos 3 caracteres';
+    if (!name) return res.status(400).json({ message: 'O campo "name" é obrigatório' });
+    if (name.length > 3) {
+        return res.status(400).json({ message: 'O campo "name" deve ter pelo menos 3 caracteres' });
+    }
+    next();
+}
+module.exports = authUserName;
