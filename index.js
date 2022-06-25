@@ -3,6 +3,7 @@ const bodyParser = require('body-parser');
 const fs = require('fs/promises');
 const generateToken = require('./generateToken');
 const loginValidate = require('./loginMiddleware');
+const { groupEnd } = require('console');
 
 const app = express();
 const TALKER_JSON = './talker.json';
@@ -138,7 +139,34 @@ async (req, res) => {
 
   return res.status(201).json({ name, age, id: incrementID, talk: { watchedAt, rate } });
 });
+// req 6
+app.put('/talker/:id', 
+isValideToken, 
+isValideUserName, 
+isValideAge, 
+isValideTalk, 
+isValideTalkerWatched, 
+isValideTalkRate, async (req, res) => {
+  const { id } = req.params;
+  const { name, age, talk: { watchedAt, rate } } = req.body;
+  const getTalker = JSON.parse(await fs.readFile(TALKER_JSON));
 
+  const newObj = { name, age, id: Number(id), talk: { watchedAt, rate } };
+  const user = getTalker.map((userData) => {
+    if (userData.id === Number(id)) { 
+      return newObj;
+  }
+    return userData;
+  });
+  await fs.writeFile(TALKER_JSON, JSON.stringify(user));
+    res.status(HTTP_OK_STATUS).json(newObj);
+});
+
+/* // req 7
+app.delete('/talker/:id', async (_req, res) => {
+  const getTalker = JSON.parse(await fs.readFile(TALKER_JSON ));
+  res.status(HTTP_OK_STATUS).json(getTalker);
+}); */
 app.listen(PORT, () => {
   console.log('Online');
 });
