@@ -3,7 +3,6 @@ const bodyParser = require('body-parser');
 const fs = require('fs/promises');
 const generateToken = require('./generateToken');
 const loginValidate = require('./loginMiddleware');
-const { groupEnd } = require('console');
 
 const app = express();
 const TALKER_JSON = './talker.json';
