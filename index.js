@@ -161,11 +161,19 @@ isValideTalkRate, async (req, res) => {
     res.status(HTTP_OK_STATUS).json(newObj);
 });
 
-/* // req 7
-app.delete('/talker/:id', async (_req, res) => {
-  const getTalker = JSON.parse(await fs.readFile(TALKER_JSON ));
-  res.status(HTTP_OK_STATUS).json(getTalker);
-}); */
+// req 7
+app.delete('/talker/:id', isValideToken, async (req, res) => {
+  const { id } = req.params;
+  const getTalker = JSON.parse(await fs.readFile(TALKER_JSON));
+  const user = getTalker.map((removeId) => removeId.id === Number(id));
+    if (user === -1) {
+      return user;
+    }
+    getTalker.splice(user, 1);
+  await fs.writeFile(TALKER_JSON, JSON.stringify(user));
+  res.status(204).end();
+});
+
 app.listen(PORT, () => {
   console.log('Online');
 });
